@@ -1,5 +1,3 @@
-Here's the **README.md** file for **Tutorial 2** of the **Micro Robot Framework (MRF)**. This version includes the **new features** introduced in **Tutorial 2**, **explanations of changes**, and **details of the motor control packet structure**. 🚀  
-
 ---
 
 # **Micro Robot Framework (MRF) - Step 2: Sending Motor Control Commands**
