@@ -1,33 +1,62 @@
 #include "microRobotFramework.hpp"
 #include <iostream>
-#include <unistd.h>
+#include <thread>
+#include <atomic>
+#include <chrono>
+#include <mutex>
 
-int main(){
+std::atomic<bool> running(true);  // Control loop execution
+std::mutex serial_mutex;  // Mutex for serial communication
 
-    int count = 0;
-    bool ret = false;
+// Function to receive IMU data in a separate thread
+void receiveIMUData(MRF &mrf) {
+    while (running) {
+        std::lock_guard<std::mutex> lock(serial_mutex);
+        if (mrf.receiveSensorData()) {
+            std::cout << "AccelX: " << mrf.getAccelX() << " | "
+                      << "AccelY: " << mrf.getAccelY() << " | "
+                      << "AccelZ: " << mrf.getAccelZ() << std::endl;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));  // Adjust reading frequency
+    }
+}
+
+// Function to send motor commands periodically in a separate thread
+void sendMotorCommands(MRF &mrf) {
+    int speed = 90;
+    int angle = 100;
+
+    while (running) {
+        {
+            std::lock_guard<std::mutex> lock(serial_mutex);
+            mrf.sendMotorCommand(speed, angle);
+            //std::cout << "Sent Motor Command: Speed=" << speed << ", Angle=" << angle << std::endl;
+        }
+        
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));  // Send command every 500ms
+    }
+}
+
+int main() {
     MRF mrf("/dev/ttyUSB0", 115200);
 
-    if(!mrf.isConnected()){
+    if (!mrf.isConnected()) {
         std::cout << "Serial port is not connected" << std::endl;
         return 0;
     }
-    while(true){
-        ret = mrf.receiveSensorData();
-        if(ret){
-            std::cout << mrf.getAccelX() << "  " << mrf.getAccelY() << "  " << mrf.getAccelZ() << std::endl;
-        }  
-        usleep(1000);     
-        /*
-        Cooling down. If we send motor command with short interval, 
-        Arduino serial buffer is freezed. 
-        Below code is just study and test purpose only. 
-        Use thread to receiving IMU and send motor command at same time 
-        */
-        if(count++ > 100){
-            mrf.sendMotorCommand(90, 100);
-            count = 0;
-        }
-            
-    }
+
+    // Start threads
+    std::thread imuThread(receiveIMUData, std::ref(mrf));
+    std::thread motorThread(sendMotorCommands, std::ref(mrf));
+
+    // Wait for user input to stop
+    std::cout << "Press ENTER to stop..." << std::endl;
+    std::cin.get();
+    running = false;
+
+    // Join threads before exiting
+    imuThread.join();
+    motorThread.join();
+
+    return 0;
 }
