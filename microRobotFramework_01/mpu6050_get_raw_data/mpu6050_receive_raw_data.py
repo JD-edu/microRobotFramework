@@ -3,7 +3,7 @@ import struct
 import time
 
 # Set the serial port (Change to your actual port, e.g., COM3 on Windows or /dev/ttyUSB0 on Linux/macOS)
-SERIAL_PORT = "COM5"  # Update this to match your setup
+SERIAL_PORT = "/dev/ttyACM0"  # Update this to match your setup
 BAUD_RATE = 115200
 HEADER_BYTE = 0xF5 # 아두이노에서 보낼 헤더 바이트 (예시)
 
