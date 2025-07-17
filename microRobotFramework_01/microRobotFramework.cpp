@@ -80,7 +80,7 @@ bool MRF::receiveSensorData() {
     // 3. 읽은 데이터의 길이가 정확히 20바이트인지 확인 (이중 확인, 위의 while 루프가 이미 보장)
     if (total_bytes_read != 20) {
         // 이 부분은 위에 while 루프 때문에 사실상 도달하지 않겠지만, 방어적인 코딩
-        // std::cerr << "Incomplete packet after header: expected 20 bytes, got " << total_bytes_read << std::endl; // Debugging
+        std::cerr << "Incomplete packet after header: expected 20 bytes, got " << total_bytes_read << std::endl; // Debugging
         return false;
     }
 

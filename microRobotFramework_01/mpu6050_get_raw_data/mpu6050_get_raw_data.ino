@@ -1,7 +1,12 @@
 // mpu6050_light library install 
 #include "Wire.h"
 #include <MPU6050_light.h>
+#include <SoftwareSerial.h>
 
+#define RX_PIN 7   // Arduino RX
+#define TX_PIN 8   // Arduino TX
+
+SoftwareSerial softSerial(RX_PIN, TX_PIN);  // RX, TX
 MPU6050 mpu(Wire);
 
 long timer = 0;
@@ -12,24 +17,24 @@ byte dataBuffer[21]; // Total bytes to send: 1 (header) + 20 (data) = 21 bytes
 
 void setup(){
   Serial.begin(115200);
+  softSerial.begin(9600);
   Wire.begin();
 
   byte status = mpu.begin();
   Serial.println(status);
+  softSerial.println("Motor simulation...step 1");
   pinMode(13, OUTPUT);
 
   while(status != 0){
-    digitalWrite(13, HIGH);
     delay(100);
-    digitalWrite(13, LOW);
-    delay(100);
+    softSerial.println("IMU error \n");
     status = mpu.begin(); // 재시도 로직 추가 (선택 사항)
   }
 
-  Serial.println("Calculation offset. Do not move");
+  softSerial.println("Calculation offset. Do not move");
   delay(1000);
   mpu.calcOffsets(true, true);
-  Serial.println("Done\n");
+  softSerial.println("Done\n");
 }
 
 uint16_t encoder1 = 0;
@@ -38,8 +43,9 @@ uint16_t encoder3 = 0;
 uint16_t encoder4 = 0;
 
 void loop() {
-  mpu.update();
+  
   if(millis() - timer > 50){ // 50ms마다 데이터 전송
+    mpu.update();
     int16_t accelX = (int16_t)(mpu.getAccX()*1000);
     int16_t accelY = (int16_t)(mpu.getAccY()*1000);
     int16_t accelZ = (int16_t)(mpu.getAccZ()*1000);

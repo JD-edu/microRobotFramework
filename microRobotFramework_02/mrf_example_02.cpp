@@ -6,7 +6,7 @@ int main(){
 
     int count = 0;
     bool ret = false;
-    MRF mrf("/dev/ttyUSB0", 115200);
+    MRF mrf("/dev/ttyACM0", 115200);
 
     if(!mrf.isConnected()){
         std::cout << "Serial port is not connected" << std::endl;

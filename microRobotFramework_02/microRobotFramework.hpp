@@ -36,11 +36,13 @@ public:
     uint16_t getEncoder2();
     uint16_t getEncoder3();
     uint16_t getEncoder4();
+    static const uint8_t HEADER_BYTE = 0xF5; // Python 코드의 HEADER_BYTE와 일치
+    std::string serial_port;
 
 private:
     // Serial Communication
     int serial_fd;  // File descriptor for serial port
-    std::string serial_port;
+    
     int baud_rate;
     bool connected;
 
