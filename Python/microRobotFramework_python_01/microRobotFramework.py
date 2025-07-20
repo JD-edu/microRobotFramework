@@ -40,9 +40,6 @@ class MRF:
         self.gyro_x = 0
         self.gyro_y = 0
         self.gyro_z = 0
-        self.pitch = 0.0
-        self.roll = 0.0
-        self.yaw = 0.0
 
         # Encoder Data
         self.encoder1 = 0
@@ -104,13 +101,12 @@ class MRF:
                 if header_byte[0] == self.HEADER_BYTE:
                     break  # Header found
 
-            # 2. Read remaining 20 bytes of data
-            data_buffer = self.serial_connection.read(20)
-            if len(data_buffer) != 20:
-                return False  # Incomplete packet
-
+            # 2. Read remaining 22 bytes of data, extract 20 bytes excluding length
+            data = self.serial_connection.read(20)
+            #data = remaining_data[0:20]
+        
             # 3. Parse the data
-            self._parse_sensor_data(data_buffer)
+            self._parse_sensor_data(data)
             return True
 
         except (serial.SerialException, OSError) as e:
@@ -126,23 +122,7 @@ class MRF:
             data_buffer (bytes): 20-byte data buffer
         """
         try:
-            # Unpack data: 6 signed 16-bit integers + 4 unsigned 16-bit integers
-            # '<' means little-endian format
-            unpacked_data = struct.unpack('<6h4H', data_buffer)
-
-            # IMU data (first 6 values)
-            self.accel_x = unpacked_data[0]
-            self.accel_y = unpacked_data[1] 
-            self.accel_z = unpacked_data[2]
-            self.gyro_x = unpacked_data[3]
-            self.gyro_y = unpacked_data[4]
-            self.gyro_z = unpacked_data[5]
-
-            # Encoder data (last 4 values)
-            self.encoder1 = unpacked_data[6]
-            self.encoder2 = unpacked_data[7]
-            self.encoder3 = unpacked_data[8]
-            self.encoder4 = unpacked_data[9]
+            self.accel_x, self.accel_y, self.accel_z, self.gyro_x, self.gyro_y, self.gyro_z, self.encoder1, self.encoder2, self.encoder3, self.encoder4 = struct.unpack(">hhhhhhhhhh", data_buffer)
 
         except struct.error as e:
             print(f"Error parsing sensor data: {e}")

@@ -3,7 +3,7 @@ import struct
 import time
 
 # Set the serial port (Change to your actual port, e.g., COM3 on Windows or /dev/ttyUSB0 on Linux/macOS)
-SERIAL_PORT = "/dev/ttyACM0"  # Update this to match your setup
+SERIAL_PORT = "COM5"  # Update this to match your setup
 BAUD_RATE = 115200
 HEADER_BYTE = 0xF5 # 아두이노에서 보낼 헤더 바이트 (예시)
 
@@ -21,15 +21,14 @@ def read_mpu_data():
 
             if ord(byte) == HEADER_BYTE:
                 # 헤더 다음의 22바이트를 읽으려고 시도 (총 23바이트 패킷 중 헤더 제외)
-                remaining_data = ser.read(22)
+                data = ser.read(20)
                 
                 # 읽어온 데이터의 길이가 정확히 22바이트인지 확인
-                if len(remaining_data) == 22:
-                    data = remaining_data[0:20] # 헤더 다음 2바이트를 건너뛰고 20바이트 추출
+                if len(data) == 20:
                     try:
                         # ">hhhhhhhhhh"는 10개의 short (2바이트) 값을 나타내므로 총 20바이트
                         accelX, accelY, accelZ, gX, gY, gZ, e1, e2, e3, e4 = struct.unpack(">hhhhhhhhhh", data)
-                        print(f"Accel: X={accelX}, Y={accelY}, Z={accelZ}, Gyro: X={gX}, Y={gY}, Z={gZ}")
+                        print(f"Accel: X={accelX}, Y={accelY}, Z={accelZ}")
                         # 필요한 경우 나머지 e1, e2, e3, e4 값도 출력 가능
                     except struct.error as se:
                         print(f"Struct unpack error: {se}. Data length: {len(data)}. Data: {data.hex()}")

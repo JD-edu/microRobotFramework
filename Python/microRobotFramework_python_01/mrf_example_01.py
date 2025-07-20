@@ -26,7 +26,7 @@ def main():
     # Note: You may need to change '/dev/ttyACM0' to your actual serial port
     # On Windows, it might be 'COM3', 'COM4', etc.
     # On Linux/macOS, it might be '/dev/ttyUSB0', '/dev/ttyACM0', etc.
-    mrf = MRF("/dev/ttyACM0", 115200)
+    mrf = MRF("COM5", 115200)
 
     # Check if serial connection is established
     if not mrf.is_connected():

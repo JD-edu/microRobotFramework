@@ -31,7 +31,7 @@ def main():
     # Note: You may need to change '/dev/ttyACM0' to your actual serial port
     # On Windows, it might be 'COM3', 'COM4', etc.
     # On Linux/macOS, it might be '/dev/ttyUSB0', '/dev/ttyACM0', etc.
-    mrf = MRF("/dev/ttyACM0", 115200)
+    mrf = MRF("COM5", 115200)
 
     # Check if serial connection is established
     if not mrf.is_connected():
@@ -74,7 +74,7 @@ def main():
             """
             if count > 100:
                 # Send motor command: speed=90, angle=100
-                motor_success = mrf.send_motor_command(90, 100)
+                motor_success = mrf.send_motor_command(100, 0)
                 if motor_success:
                     print(f"🎮 Motor command sent: speed=90, angle=100")
                 else:

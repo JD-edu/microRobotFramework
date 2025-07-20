@@ -41,9 +41,6 @@ class MRF:
         self.gyro_x = 0
         self.gyro_y = 0
         self.gyro_z = 0
-        self.pitch = 0.0
-        self.roll = 0.0
-        self.yaw = 0.0
 
         # Encoder Data
         self.encoder1 = 0
@@ -127,34 +124,17 @@ class MRF:
             data_buffer (bytes): 20-byte data buffer
         """
         try:
-            # Unpack data: 6 signed 16-bit integers + 4 unsigned 16-bit integers
-            # '<' means little-endian format
-            unpacked_data = struct.unpack('<6h4H', data_buffer)
-
-            # IMU data (first 6 values)
-            self.accel_x = unpacked_data[0]
-            self.accel_y = unpacked_data[1] 
-            self.accel_z = unpacked_data[2]
-            self.gyro_x = unpacked_data[3]
-            self.gyro_y = unpacked_data[4]
-            self.gyro_z = unpacked_data[5]
-
-            # Encoder data (last 4 values)
-            self.encoder1 = unpacked_data[6]
-            self.encoder2 = unpacked_data[7]
-            self.encoder3 = unpacked_data[8]
-            self.encoder4 = unpacked_data[9]
+            self.accel_x, self.accel_y, self.accel_z, self.gyro_x, self.gyro_y, self.gyro_z, self.encoder1, self.encoder2, self.encoder3, self.encoder4 = struct.unpack(">hhhhhhhhhh", data_buffer)
 
         except struct.error as e:
             print(f"Error parsing sensor data: {e}")
-
     def send_motor_command(self, speed: int, angle: int) -> bool:
         """
         Send motor control command to Arduino
 
         Args:
-            speed (int): Speed value (-255 to 255)
-            angle (int): Angle value (-180 to 180)
+            speed (int): Speed value (0 to 255)
+            angle (int): Angle value (0 to 180)
 
         Returns:
             bool: True if command sent successfully, False otherwise
@@ -162,25 +142,32 @@ class MRF:
         if not self.is_connected():
             return False
 
-        try:
-            # Clamp values to valid ranges
-            speed = max(-255, min(255, speed))
-            angle = max(-180, min(180, angle))
+        speed = max(0, min(100, speed))  # 
+        angle = max(-90, min(90, angle))  # 
 
-            # Create motor command packet
-            # Format: Header (1 byte) + Speed (2 bytes) + Angle (2 bytes) = 5 bytes total
-            command_packet = struct.pack('<Bhh', self.MOTOR_HEADER_BYTE, speed, angle)
+        # Convert speed and angle to their signed byte representations
+        # Python's struct.pack with 'b' (signed char) handles this directly
+        packed_speed = speed.to_bytes(1, byteorder='little', signed=True)[0]
+        packed_angle = angle.to_bytes(1, byteorder='little', signed=True)[0]
 
-            # Send command
-            bytes_written = self.serial_connection.write(command_packet)
-            self.serial_connection.flush()  # Ensure data is sent immediately
+        # Calculate checksum: sum of the first 4 bytes
+        # Ensure all values are treated as unsigned for checksum calculation
+        header_byte = 0xF5
+        packet_length = 3 # Data length is 3 (speed, angle)
 
-            return bytes_written == len(command_packet)
+        checksum = (header_byte + packet_length + (speed & 0xFF) + (angle & 0xFF)) & 0xFF
 
-        except (serial.SerialException, OSError, struct.error) as e:
-            print(f"Error sending motor command: {e}")
-            return False
+        # Create motor command packet
+        # Format: Header (1 byte) + Packet Length (1 byte) + Speed (1 byte) + Angle (1 byte) + Checksum (1 byte) = 5 bytes total
+        command_packet = struct.pack('<BBBBB', header_byte, packet_length, packed_speed, packed_angle, checksum)
 
+        # Send command
+        bytes_written = self.serial_connection.write(command_packet)
+        self.serial_connection.flush()  # Ensure data is sent immediately
+
+        return bytes_written == len(command_packet)
+
+       
     # Getter methods for IMU data
     def get_accel_x(self) -> int:
         """Get X-axis acceleration"""
