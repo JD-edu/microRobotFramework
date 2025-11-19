@@ -32,7 +32,7 @@ add_subdirectory(microRobotFramework2)
 # set(CMAKE_BUILD_TYPE Debug)
 ```
 
-### 2.2. Sub-Project CMakeLists.txt (in /C++/microRobotFramework1)
+### 2.2. Sub-Project CMakeLists.txt (in /C++/microRobotFramework_01)
 This file defines two separate targets: the Library (mrf_lib_01) and the Executable (mrf_example_01), and handles their linkage.
 
 ```CMake
