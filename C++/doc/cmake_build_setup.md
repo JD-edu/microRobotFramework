@@ -6,21 +6,20 @@ The project uses a standard multi-level structure where a top-level CMakeLists.t
 
 The structure for the microRobotFramework_01 component should be:
 
-/C++
-├── CMakeLists.txt  <-- Top-level project
-├── microRobotFramework_01
-│   ├── microRobotFramework_01.hpp    (Header)
-│   ├── microRobotFramework_01.cpp    (Source/Library Implementation)
-│   ├── mrf_example_01.cpp          (Executable/Main Application)
-│   └── CMakeLists.txt              <-- Sub-project build definition
-└── microRobotFramework2
-    └── ... (similar files and CMakeLists.txt)
+/C++<br>
+├── CMakeLists.txt  <-- Top-level project<br>
+├── microRobotFramework_01<br>
+│   ├── microRobotFramework_01.hpp    (Header)<br>
+│   ├── microRobotFramework_01.cpp    (Source/Library Implementation)<br>
+│   ├── mrf_example_01.cpp          (Executable/Main Application)<br>
+│   └── CMakeLists.txt              <-- Sub-project build definition<br> 
+└── microRobotFramework_02<br> 
+    └── ... (similar files and CMakeLists.txt)<br>
 
 ## 2. ⚙️ CMake Configuration Files
 ### 2.1. Top-Level CMakeLists.txt (in /C++)
 This file initializes the project and tells CMake to look inside the subdirectories for specific build targets.
-```
-CMake
+```CMake
 # /C++/CMakeLists.txt
 # Specify the minimum required CMake version
 cmake_minimum_required(VERSION 3.10)
@@ -36,8 +35,7 @@ add_subdirectory(microRobotFramework2)
 ### 2.2. Sub-Project CMakeLists.txt (in /C++/microRobotFramework1)
 This file defines two separate targets: the Library (mrf_lib_01) and the Executable (mrf_example_01), and handles their linkage.
 
-CMake
-```
+```CMake
 # /C++/microRobotFramework1/CMakeLists.txt
 
 # Define the reusable class implementation as a static/shared library.
@@ -69,26 +67,29 @@ target_include_directories(mrf_example_01 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 ## 3. 🛠️ Build Process
 Follow these steps from the root /C++ directory to configure and build your project. This process uses an out-of-source build, which is the recommended practice.
 
-Step 1: Create Build Directory
-Bash
-
+### Step 1: Create Build Directory
+```Bash
 cd /C++
 mkdir build
 cd build
-Step 2: Configure CMake
+```
+### Step 2: Configure CMake
 Run CMake to generate the build files (e.g., Makefiles or Visual Studio projects).
 
-Bash
+```Bash
 
 # The '..' points to the parent directory where the root CMakeLists.txt is located
-cmake .. 
-Step 3: Build the Targets
+cmake ..
+```
+ 
+### Step 3: Build the Targets
 Use the multi-platform build command to compile the project.
 
-Bash
+```Bash
 
-# This command automatically runs the compiler (e.g., make, ninja)
-cmake --build . 
+# This command automatically runs the compiler.
+make 
+```
 The resulting executable, mrf_example_01, will be located in the build/microRobotFramework1 directory (or similar, depending on the generator and OS).
 
-Would you like to continue by setting up the same CMakeLists.txt for your second subfolder, microRobotFramework2, or do you have additional libraries (like Boost or a specific serial library) that need to be found and linked?
+
