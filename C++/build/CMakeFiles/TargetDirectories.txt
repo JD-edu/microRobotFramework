@@ -1,2 +1,0 @@
-/home/jdedu/microRobotFramework/build/CMakeFiles/edit_cache.dir
-/home/jdedu/microRobotFramework/build/CMakeFiles/rebuild_cache.dir
