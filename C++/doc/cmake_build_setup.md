@@ -1,7 +1,7 @@
-🤖 CMake Build Guide for Micro Robot Framework
+# 🤖 CMake Build Guide for Micro Robot Framework
 This document outlines the standard configuration and build process using CMake for projects with a nested structure, specifically for the microRobotFramework components (microRobotFramework1, microRobotFramework2, etc.).
 
-1. 📁 Required Project Structure
+## 1. 📁 Required Project Structure
 The project uses a standard multi-level structure where a top-level CMakeLists.txt manages the overall project and delegates the actual build definitions to the subdirectories.
 
 The structure for the microRobotFramework1 component should be:
@@ -15,7 +15,7 @@ The structure for the microRobotFramework1 component should be:
 │   └── CMakeLists.txt              <-- Sub-project build definition
 └── microRobotFramework2
     └── ... (similar files and CMakeLists.txt)
-2. ⚙️ CMake Configuration Files
+## 2. ⚙️ CMake Configuration Files
 2.1. Top-Level CMakeLists.txt (in /C++)
 This file initializes the project and tells CMake to look inside the subdirectories for specific build targets.
 
