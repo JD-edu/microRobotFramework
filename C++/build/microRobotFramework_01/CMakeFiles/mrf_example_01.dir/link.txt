@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/mrf_example_01.dir/mrf_example_01.cpp.o -o mrf_example_01  libmrf_lib_01.a 

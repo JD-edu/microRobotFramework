@@ -1,0 +1,2 @@
+/usr/bin/ar qc libmrf_lib_02.a CMakeFiles/mrf_lib_02.dir/microRobotFramework_02.cpp.o
+/usr/bin/ranlib libmrf_lib_02.a
