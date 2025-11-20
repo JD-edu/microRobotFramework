@@ -6,8 +6,8 @@ The **Arduino code** sends sensor data over **serial communication** in a struct
 ## **📜 Packet Format**
 | **Byte Index** | **Field Name** | **Description** | **Size (Bytes)** |
 |--------------|--------------|------------------------------------------------------|-------------|
-| `0` | **Header** | Start-of-frame marker (fixed value `0xF5`) | 1 |
-| `1` | **Length** | Number of bytes in the packet (fixed `21`) | 1 |
+| `0` | **Header1** | Start-of-frame marker (fixed value `0xF5`) | 1 |
+| `1` | **Header2** | Start-of-frame marker (fixed value `0xF5`) | 1 |
 | `2-3` | **AccelX** | 16-bit signed integer (`int16_t`) | 2 |
 | `4-5` | **AccelY** | 16-bit signed integer (`int16_t`) | 2 |
 | `6-7` | **AccelZ** | 16-bit signed integer (`int16_t`) | 2 |
